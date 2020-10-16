@@ -1094,6 +1094,7 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 			for (Object item : list) {
 				Object[] owner = (Object[]) item;
 				if (!Owner.TYPE_DEMISE.equals(owner[3])) {
+					String ownerAddr = owner[1] + "\n" + owner[2];
 					addRow.apply(rpt, new Object[]{
 							"shipNameEng", array[2],
 							"shipNameChi", array[3],
@@ -1101,8 +1102,9 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 							"on", array[4],
 							"grt", (array[5] != null ? array[5].toString() : ""),
 							"date", array[6],
-							"owner", owner[1],
-							"address", owner[2],
+							"owner", ownerAddr
+							//"owner", owner[1],
+							//"address", owner[2],
 					});
 				}
 			}
@@ -1141,6 +1143,7 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 			for (Object item : list) {
 				Object[] owner = (Object[]) item;
 				if (Owner.TYPE_DEMISE.equals(owner[3])) {
+					String chartererAddr = owner[1] + "\n" + owner[2];
 					addRow.apply(rpt, new Object[]{
 							"shipNameEng", array[2],
 							"shipNameChi", array[3],
@@ -1148,8 +1151,9 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 							"on", array[4],
 							"grt", (array[5] != null ? array[5].toString() : ""),
 							"date", array[6],
-							"charterer", owner[1],
-							"address", owner[2],
+							"charterer", chartererAddr
+							//"charterer", owner[1],
+							//"address", owner[2],
 					});
 				}
 			}
@@ -1160,6 +1164,7 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 		rpt = new ArrayList<>();
 		for (int i = 0; i < rpOthers.size(); i++) {
 			Object[] array = (Object[]) rpOthers.get(i);
+			String rpAddr = array[7] + "\n" + array[8];
 			addRow.apply(rpt, new Object[]{
 					"shipNameEng", array[2],
 					"shipNameChi", array[3],
@@ -1167,8 +1172,9 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 					"on", array[4],
 					"grt", (array[5] != null ? array[5].toString() : ""),
 					"date", array[6],
-					"representative", array[7] ,
-					"address", array[8],
+					"representative", rpAddr
+					//"representative", array[7] ,
+					//"address", array[8],
 			});
 		}
 		reports.add(rpt);
@@ -1195,6 +1201,7 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 		rpt = new ArrayList<>();
 		for (int i = 0; i < rpAddrs.size(); i++) {
 			Object[] array = (Object[]) rpAddrs.get(i);
+			String rpAddr = array[7] + "\n" + array[8];
 			addRow.apply(rpt, new Object[]{
 					"shipNameEng", array[2],
 					"shipNameChi", array[3],
@@ -1202,8 +1209,9 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 					"on", array[4],
 					"grt", (array[5] != null ? array[5].toString() : ""),
 					"date", array[6],
-					"representative", array[7],
-					"address", array[8],
+					"representative", rpAddr
+					//"representative", array[7],
+					//"address", array[8],
 			});
 		}
 		reports.add(rpt);
@@ -1237,6 +1245,8 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 				ownerAddr =  owner[2] + "\n";
 			}
 		}
+		
+		String ownerNameAddress = ownerName + ownerAddr;
 		addRow.apply(rpt, new Object[]{
 				"shipNameEng", array[2],
 				"shipNameChi", array[3],
@@ -1244,8 +1254,9 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 				"on", array[4],
 				"grt", (array[5] != null ? array[5].toString() : ""),
 				"date", array[6],
-				"owner", ownerName.trim(),
-				"address", ownerAddr.trim(),
+				"owner", ownerNameAddress.trim()
+				//"owner", ownerName.trim(),
+				//"address", ownerAddr.trim(),
 		});
 	}
 
