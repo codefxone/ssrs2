@@ -94,7 +94,8 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="50" splitType="Stretch">
+		<band height="60" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
 			<textField>
 				<reportElement stretchType="RelativeToTallestObject" x="8" y="0" width="239" height="16" uuid="f301a9d7-606d-4ab4-a35f-552aa46d70be">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -147,7 +148,7 @@
 				<textFieldExpression><![CDATA[$F{date}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement stretchType="RelativeToTallestObject" x="484" y="0" width="350" height="46" uuid="82375296-ce41-448d-ad2d-5ce8b8616965">
+				<reportElement stretchType="RelativeToTallestObject" x="484" y="0" width="350" height="60" uuid="82375296-ce41-448d-ad2d-5ce8b8616965">
 					<property name="com.jaspersoft.studio.unit.width" value="px"/>
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
