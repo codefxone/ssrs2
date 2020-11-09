@@ -1086,6 +1086,9 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 		}
 		reports.add(rpt);
 		// 05 owner addr
+		//ownerShipReport3(Transaction.CODE_CHG_OWNER_ADDR, reportDate);
+		//ownerShipReport2(Transaction.CODE_CHG_OWNER_ADDR, reportDate);
+		//ownerShipReport1(Transaction.CODE_CHG_OWNER_ADDR, reportDate);
 		List<?> changeOwnerAddrs = ownerShipReport(Transaction.CODE_CHG_OWNER_ADDR, reportDate);
 		rpt = new ArrayList<>();
 		for (int i = 0; i < changeOwnerAddrs.size(); i++) {
@@ -1160,7 +1163,7 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 		}
 		reports.add(rpt);
 		// 08 rep
-		List<?> rpOthers = ownerShipReport(Transaction.CODE_CHG_RP_OTHERS, reportDate);
+		List<?> rpOthers = rpReport(Transaction.CODE_CHG_RP_OTHERS, reportDate);
 		rpt = new ArrayList<>();
 		for (int i = 0; i < rpOthers.size(); i++) {
 			Object[] array = (Object[]) rpOthers.get(i);
@@ -1179,7 +1182,7 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 		}
 		reports.add(rpt);
 		// 09 rep name
-		List<?> rpNames = ownerShipReport(Transaction.CODE_CHG_RP_NAME, reportDate);
+		List<?> rpNames = rpReport(Transaction.CODE_CHG_RP_NAME, reportDate);
 		rpt = new ArrayList<>();
 		for (int i = 0; i < rpNames.size(); i++) {
 			Object[] array = (Object[]) rpNames.get(i);
@@ -1197,7 +1200,7 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 		}
 		reports.add(rpt);
 		// 10 rep addr
-		List<?> rpAddrs = ownerShipReport(Transaction.CODE_CHG_RP_ADDR, reportDate);
+		List<?> rpAddrs = rpReport(Transaction.CODE_CHG_RP_ADDR, reportDate);
 		rpt = new ArrayList<>();
 		for (int i = 0; i < rpAddrs.size(); i++) {
 			Object[] array = (Object[]) rpAddrs.get(i);
@@ -1266,6 +1269,111 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 	 * @return tx_id, appl_no, reg_name, cname, off_no, grt, date_change, rpName, rpAddr, stDesc
 	 */
 	private List<?> ownerShipReport(String txCode, Date reportDate) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+		String dateStr = sdf.format(reportDate);
+		Query query = em.createNativeQuery("select tx.AT_SER_NUM, tx.rm_appl_no, rm.reg_name, "
+				+ "rm.reg_cname cname , rm.off_no, rm.gross_ton, tx.date_change, " +
+				"ow.owner_name, isnull(ow.address1 + ' ', '') + isnull(ow.address2 + ' ', '') + isnull(ow.address3, '')  ow_addr, " +
+				"SS.SS_DESC " +
+				"from Transactions  tx " +
+				"inner join REG_MASTERS_HIST rm on rm.appl_no = tx.rm_appl_no and tx.at_ser_num = rm.tx_id " +
+				"left outer join SHIP_SUBTYPES ss on ss.ST_SHIP_TYPE_CODE = rm.SS_ST_SHIP_TYPE_CODE and ss.SHIP_SUBTYPE_CODE = rm.SS_SHIP_SUBTYPE_CODE " +
+				"inner join OWNERS_HIST ow on ow.rm_appl_no = tx.rm_appl_no and tx.at_ser_num = ow.tx_id " +
+				"where tc_txn_code in :txCode " +
+				"and substring(convert(varchar, date_change, 23), 1, 7) = substring(convert(varchar, :reportDate, 23), 1, 7) " +
+				//"and substring(convert(varchar, date_change, 23), 1, 7) = :reportDate "
+				//"and left(convert(varchar, tx.date_change),7) = :reportDate " +
+				"order by tx.date_change asc ");
+		query.setParameter("txCode", Arrays.asList(txCode.split("\\,")));
+		query.setParameter("reportDate", dateStr);
+		//List<?> lst = query.getResultList();
+		List<Object[]> lst = query.getResultList();
+		System.out.println("txCode:" + txCode);
+		System.out.println("reportDate:" + dateStr);
+		System.out.println("lst size:" + lst.size());
+		return lst;
+	}
+
+	private List<?> ownerShipReport1(String txCode, Date reportDate) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+		String dateStr = sdf.format(reportDate);
+		Query query = em.createNativeQuery("select tx.AT_SER_NUM, tx.rm_appl_no, rm.reg_name, "
+				+ "rm.reg_cname cname , rm.off_no, rm.gross_ton, tx.date_change, " +
+				"ow.owner_name, isnull(ow.address1 + ' ', '') + isnull(ow.address2 + ' ', '') + isnull(ow.address3, '')  ow_addr " +
+				//"SS.SS_DESC " +
+				"from Transactions  tx " +
+				"inner join REG_MASTERS_HIST rm on rm.appl_no = tx.rm_appl_no and tx.at_ser_num = rm.tx_id " +
+				//"left outer join SHIP_SUBTYPES ss on ss.ST_SHIP_TYPE_CODE = rm.SS_ST_SHIP_TYPE_CODE and ss.SHIP_SUBTYPE_CODE = rm.SS_SHIP_SUBTYPE_CODE " +
+				"inner join OWNERS_HIST ow on ow.rm_appl_no = tx.rm_appl_no and tx.at_ser_num = ow.tx_id " +
+				"where tc_txn_code = '18' " +
+				//"and substring(convert(varchar, date_change, 23), 1, 7) = substring(convert(varchar, :reportDate, 23), 1, 7) "
+				//"and substring(convert(varchar, date_change, 23), 1, 7) = :reportDate "
+				"and left(convert(varchar, tx.date_change),7) = '2020-06' " +
+				"order by tx.date_change asc ");
+		//query.setParameter("txCode", Arrays.asList(txCode.split("\\,")));
+		//query.setParameter("reportDate", dateStr);
+		//List<?> lst = query.getResultList();
+		List<Object[]> lst = query.getResultList();
+		System.out.println("owner ship report 1");
+		System.out.println("txCode:" + txCode);
+		System.out.println("reportDate:" + dateStr);
+		System.out.println("lst size:" + lst.size());
+		return lst;
+	}
+	private List<?> ownerShipReport2(String txCode, Date reportDate) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+		String dateStr = sdf.format(reportDate);
+		Query query = em.createNativeQuery("select tx.AT_SER_NUM, tx.rm_appl_no, rm.reg_name, "
+				+ "rm.reg_cname cname , rm.off_no, rm.gross_ton, tx.date_change, " +
+				"ow.owner_name, isnull(ow.address1 + ' ', '') + isnull(ow.address2 + ' ', '') + isnull(ow.address3, '')  ow_addr, " +
+				"SS.SS_DESC " +
+				"from Transactions  tx " +
+				"inner join REG_MASTERS_HIST rm on rm.appl_no = tx.rm_appl_no and tx.at_ser_num = rm.tx_id " +
+				"left outer join SHIP_SUBTYPES ss on ss.ST_SHIP_TYPE_CODE = rm.SS_ST_SHIP_TYPE_CODE and ss.SHIP_SUBTYPE_CODE = rm.SS_SHIP_SUBTYPE_CODE " +
+				"inner join OWNERS_HIST ow on ow.rm_appl_no = tx.rm_appl_no and tx.at_ser_num = ow.tx_id " +
+				"where tc_txn_code = :txCode " +
+				//"and substring(convert(varchar, date_change, 23), 1, 7) = substring(convert(varchar, :reportDate, 23), 1, 7) "
+				//"and substring(convert(varchar, date_change, 23), 1, 7) = :reportDate "
+				"and left(convert(varchar, tx.date_change),7) = '2020-05' " +
+				"order by tx.date_change asc ");
+		query.setParameter("txCode", Arrays.asList(txCode.split("\\,")));
+		//query.setParameter("reportDate", dateStr);
+		//List<?> lst = query.getResultList();
+		List<Object[]> lst = query.getResultList();
+		System.out.println("owner ship report 2");
+		System.out.println("txCode:" + txCode);
+		System.out.println("reportDate:" + dateStr);
+		System.out.println("lst size:" + lst.size());
+		return lst;
+	}
+	private List<?> ownerShipReport3(String txCode, Date reportDate) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+		String dateStr = sdf.format(reportDate);
+		Query query = em.createNativeQuery("select tx.AT_SER_NUM, tx.rm_appl_no, rm.reg_name, "
+				+ "rm.reg_cname cname , rm.off_no, rm.gross_ton, tx.date_change, " +
+				"ow.owner_name, isnull(ow.address1 + ' ', '') + isnull(ow.address2 + ' ', '') + isnull(ow.address3, '')  ow_addr, " +
+				"SS.SS_DESC " +
+				"from Transactions  tx " +
+				"inner join REG_MASTERS_HIST rm on rm.appl_no = tx.rm_appl_no and tx.at_ser_num = rm.tx_id " +
+				"left outer join SHIP_SUBTYPES ss on ss.ST_SHIP_TYPE_CODE = rm.SS_ST_SHIP_TYPE_CODE and ss.SHIP_SUBTYPE_CODE = rm.SS_SHIP_SUBTYPE_CODE " +
+				"inner join OWNERS_HIST ow on ow.rm_appl_no = tx.rm_appl_no and tx.at_ser_num = ow.tx_id " +
+				"where tc_txn_code = '18' " +
+				//"and substring(convert(varchar, date_change, 23), 1, 7) = substring(convert(varchar, :reportDate, 23), 1, 7) "
+				//"and substring(convert(varchar, date_change, 23), 1, 7) = :reportDate "
+				//"and left(convert(varchar, tx.date_change),7) = :reportDate " +
+				"order by tx.date_change asc ");
+		//query.setParameter("txCode", Arrays.asList(txCode.split("\\,")));
+		//query.setParameter("reportDate", dateStr);
+		//List<?> lst = query.getResultList();
+		List<Object[]> lst = query.getResultList();
+		System.out.println("owner ship report 3");
+		System.out.println("txCode:" + txCode);
+		System.out.println("reportDate:" + dateStr);
+		System.out.println("lst size:" + lst.size());
+		return lst;
+	}
+
+	private List<?> rpReport(String txCode, Date reportDate) {
 		Query query = em.createNativeQuery("select tx.AT_SER_NUM, tx.rm_appl_no, rm.reg_name, "
 				+ "rm.reg_cname cname , rm.off_no, rm.gross_ton, tx.date_change, " +
 				"rp.rep_name1, isnull(rp.address1 + ' ', '') + isnull(rp.address2 + ' ', '') + isnull(rp.address3, '')  rp_addr, " +
@@ -1279,7 +1387,8 @@ public class RegMasterJpaDao extends AbstractJpaDao<RegMaster, String> implement
 				+ "order by tx.date_change asc ");
 		query.setParameter("txCode", Arrays.asList(txCode.split("\\,")));
 		query.setParameter("reportDate", reportDate);
-		return query.getResultList();
+		List<?> lst = query.getResultList();
+		return lst;
 	}
 	/**
 	 * @param txid
